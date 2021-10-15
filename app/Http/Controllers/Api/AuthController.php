@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Validator;
-
 class AuthController extends Controller
 {
     public function __construct() {
@@ -22,7 +21,12 @@ class AuthController extends Controller
         ]);
 
         if($validator->fails()){
-            return response()->json($validator->errors()->toJson(), 400);
+            // dd($validator->errors()->toJson());
+          return response()->json([            
+          'status' => false,
+          'code'=>400,
+          'message' =>$validator->errors()
+          ], 400);
         }
 
         $user = User::create(array_merge(
@@ -31,9 +35,10 @@ class AuthController extends Controller
                 ));
 
         return response()->json([
+            'status' => true,
+            'code'=>200,
             'message' => 'User successfully registered',
-            'user' => $user
-        ], 201);
+        ], 200);
     }   
     
     public function changePassWord(Request $request) {
@@ -64,14 +69,22 @@ class AuthController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
+            return response()->json([            
+                'status' => false,
+                'code'=>422,
+                'message' =>$validator->errors()
+                ], 422);
         }
 
         if (! $token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            
+            return response()->json([
+                'status' => false,
+                'code'=>401,
+                'error' => 'Unauthorized'], 401);
         }
 
-        return $this->createNewToken($token);
+        return $this->createNewToken($token,'User successfully login');
     }
 
     public function logout() {
@@ -85,16 +98,23 @@ class AuthController extends Controller
     }
 
     public function userProfile() {
-        return response()->json(auth()->user());
+        return response()->json([            
+            'status' => false,
+            'code'=>200,
+            'users' =>auth()->user()
+            ]);
+          
     }
 
-    protected function createNewToken($token){
+    protected function createNewToken($token,$message=""){
         return response()->json([
+            'status' => true,
+            'code'=>200,
+            'message' => $message,
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_in' => auth()->factory()->getTTL() * 60*60,
             'user' => auth()->user()
         ]);
     }
-    
 }

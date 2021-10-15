@@ -1,0 +1,105 @@
+1.Exams management
+
+Resourece API
+ 
+ - Register 
+     * URI: http://sytjhngf.nethost-3811.000nethost.com/api/auth/register
+     * Method:POST
+     * Request:
+            {
+                "name":"phuong",
+                "email":"admin003@gmail.com",
+                "password":"12345678",
+                "password_confirmation":"12345678"
+            }
+
+     * Respone:
+         - Successfully :
+            {
+                "status": true,
+                "code": 200,
+                "message": "User successfully registered"
+            }
+         - Faile :
+            {
+                "status": false,
+                "code": 400,
+                "message": {
+                    "name": [
+                        "The name field is required."
+                    ],
+                    "email": [
+                        "The email field is required."
+                    ]
+                }
+            } 
+
+ - Login 
+     * URI: http://sytjhngf.nethost-3811.000nethost.com/api/auth/register
+     * Method:POST
+     * Request:
+            {
+                "email":"admin003@gmail.com",
+                "password":"12345678"          
+            }
+
+     * Respone:
+         - Successfully :
+            {
+                "status": true,
+                "code": 200,
+                "message": "User successfully login",
+                "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc....",
+                "token_type": "bearer",
+                "expires_in": 216000,
+                "user": {
+                    "id": 5,
+                    "name": "phuong",
+                    "email": "admin003@gmail.com",
+                    "email_verified_at": null,
+                    "created_at": "2021-10-15T02:58:48.000000Z",
+                    "updated_at": "2021-10-15T02:58:48.000000Z"
+                }
+            }
+         - Faile :
+                {
+                    "status": false,
+                    "code": 422,
+                    "message": {
+                        "email": [
+                            "The email must be a valid email address."
+                        ],
+                        "password": [
+                            "The password must be at least 6 characters."
+                        ]
+                    }
+                }
+
+            + Incorrect account or password
+                {
+                    "status": false,
+                    "code": 401,
+                    "message": "Incorrect account or password"
+                }           
+
+ - User profile 
+     * URI: http://sytjhngf.nethost-3811.000nethost.com/api/auth/user-profile?token=eyJ0eXAiOiJKV1....
+     * Method:GET
+     * Request:
+     * Respone:
+      - Successfully :
+            {
+                "status": true,
+                "code": 200,
+                "users": {
+                    "id": 5,
+                    "name": "phuong",
+                    "email": "admin003@gmail.com",
+                    "email_verified_at": null,
+                    "created_at": "2021-10-15T02:58:48.000000Z",
+                    "updated_at": "2021-10-15T02:58:48.000000Z"
+                }
+            }
+
+       - Faile :
+           Status Code: 500 Internal Server Error
